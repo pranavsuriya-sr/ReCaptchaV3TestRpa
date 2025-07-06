@@ -58,7 +58,8 @@ export const useRecaptcha = () => {
       const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
       
       if (!supabaseUrl || !supabaseKey) {
-        throw new Error('Supabase configuration is missing. Please check your environment variables.');
+        console.warn('Supabase configuration missing. Environment variables not set.');
+        throw new Error('Backend configuration is missing. Please check your deployment settings.');
       }
 
       // Verify with backend
@@ -73,7 +74,8 @@ export const useRecaptcha = () => {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(`Backend verification failed: ${response.status} - ${errorData.error || 'Unknown error'}`);
+        const errorMessage = errorData.error || `HTTP ${response.status}`;
+        throw new Error(`Backend verification failed: ${errorMessage}`);
       }
 
       const result: RecaptchaResponse = await response.json();

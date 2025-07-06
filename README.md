@@ -10,6 +10,7 @@ This project implements a secure authentication system using reCAPTCHA v3 with p
 - ✅ **Modern UI/UX** - Beautiful, responsive design with Tailwind CSS
 - ✅ **TypeScript** - Full type safety
 - ✅ **Real-time Metrics** - Live reCAPTCHA score display
+- ✅ **Debug Tools** - Built-in debugging for deployment issues
 
 ## Prerequisites
 
@@ -21,87 +22,70 @@ This project implements a secure authentication system using reCAPTCHA v3 with p
    - Project URL
    - Anon Key
 
-## Setup Instructions
+## Quick Start
 
-### 1. Get reCAPTCHA Keys
+### 1. Setup with Interactive Script
 
-1. Go to [Google reCAPTCHA Admin Console](https://www.google.com/recaptcha/admin)
-2. Create a new site registration
-3. Choose **reCAPTCHA v3**
-4. Add your domain(s)
-5. Copy the **Site Key** and **Secret Key**
-
-### 2. Set Up Supabase
-
-1. Create a new Supabase project at [supabase.com](https://supabase.com)
-2. Copy your project URL and anon key from Settings > API
-
-### 3. Environment Variables
-
-Create a `.env` file in the root directory:
-
-```env
-# Supabase Configuration
-VITE_SUPABASE_URL=your_supabase_project_url_here
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key_here
-
-# reCAPTCHA Configuration
-# Note: The secret key is used in the backend function, not in the frontend
-# RECAPTCHA_SECRET_KEY=your_recaptcha_secret_key_here
+```bash
+npm run setup
 ```
 
-### 4. Deploy Supabase Edge Function
+Follow the prompts to configure your environment variables and reCAPTCHA keys.
 
-1. Install Supabase CLI:
+### 2. Manual Setup
+
+1. **Get reCAPTCHA Keys**
+   - Go to [Google reCAPTCHA Admin Console](https://www.google.com/recaptcha/admin)
+   - Create a new site registration
+   - Choose **reCAPTCHA v3**
+   - Add your domain(s)
+   - Copy the **Site Key** and **Secret Key**
+
+2. **Set Up Supabase**
+   - Create a new Supabase project at [supabase.com](https://supabase.com)
+   - Copy your project URL and anon key from Settings > API
+
+3. **Environment Variables**
+   Create a `.env` file in the root directory:
+   ```env
+   VITE_SUPABASE_URL=your_supabase_project_url_here
+   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+   ```
+
+4. **Deploy Supabase Edge Function**
    ```bash
    npm install -g supabase
-   ```
-
-2. Login to Supabase:
-   ```bash
    supabase login
-   ```
-
-3. Link your project:
-   ```bash
    supabase link --project-ref your_project_ref
-   ```
-
-4. Set the reCAPTCHA secret key:
-   ```bash
    supabase secrets set RECAPTCHA_SECRET_KEY=your_recaptcha_secret_key_here
-   ```
-
-5. Deploy the edge function:
-   ```bash
    supabase functions deploy verify-recaptcha
    ```
 
-### 5. Update reCAPTCHA Site Key
+5. **Install Dependencies & Run**
+   ```bash
+   npm install
+   npm run dev
+   ```
 
-Update the site key in `index.html`:
+## Deployment
 
-```html
-<script src="https://www.google.com/recaptcha/api.js?render=YOUR_SITE_KEY_HERE"></script>
-```
+### Netlify Deployment
 
-And in `src/hooks/useRecaptcha.ts`:
+For detailed Netlify deployment instructions, see [NETLIFY_DEPLOYMENT.md](./NETLIFY_DEPLOYMENT.md).
 
-```typescript
-const RECAPTCHA_SITE_KEY = 'YOUR_SITE_KEY_HERE';
-```
+**Quick Steps:**
+1. Push your code to GitHub
+2. Connect your repository to Netlify
+3. Add environment variables in Netlify dashboard:
+   - `VITE_SUPABASE_URL`
+   - `VITE_SUPABASE_ANON_KEY`
+4. Deploy
 
-### 6. Install Dependencies
+### Other Platforms
 
-```bash
-npm install
-```
-
-### 7. Run the Development Server
-
-```bash
-npm run dev
-```
+The same environment variables need to be configured for any deployment platform:
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
 
 ## How It Works
 
@@ -123,6 +107,11 @@ npm run dev
    - Real-time reCAPTCHA metrics display
    - Supabase authentication integration
 
+4. **Debug Tools** (`src/components/DebugInfo.tsx`)
+   - Environment variable status
+   - Configuration validation
+   - Troubleshooting assistance
+
 ### Backend (Supabase Edge Functions)
 1. **verify-recaptcha** (`supabase/functions/verify-recaptcha/index.ts`)
    - Receives reCAPTCHA token from frontend
@@ -143,32 +132,27 @@ npm run dev
 
 ### Common Issues
 
-1. **"reCAPTCHA not loaded"**
-   - Check if the Google reCAPTCHA script is loading
-   - Verify your site key is correct
-   - Ensure you're on the correct domain
+1. **"Backend configuration is missing"**
+   - ✅ Check that environment variables are set
+   - ✅ Verify variable names start with `VITE_`
+   - ✅ Redeploy after adding variables
 
-2. **"Supabase configuration is missing"**
-   - Create a `.env` file with your Supabase credentials
-   - Restart the development server
+2. **"reCAPTCHA not loaded"**
+   - ✅ Check if your domain is added to reCAPTCHA settings
+   - ✅ Verify the site key is correct
 
 3. **"Backend verification failed"**
-   - Check if the Supabase edge function is deployed
-   - Verify the `RECAPTCHA_SECRET_KEY` is set in Supabase
-   - Check the function logs in Supabase dashboard
-
-4. **Low reCAPTCHA scores**
-   - This is normal for new domains
-   - Scores improve over time as Google learns user behavior
-   - Consider adjusting the score threshold (default: 0.5)
+   - ✅ Ensure Supabase edge function is deployed
+   - ✅ Check if `RECAPTCHA_SECRET_KEY` is set in Supabase
+   - ✅ Verify Supabase URL and anon key are correct
 
 ### Debug Mode
 
-Enable debug logging by adding this to your browser console:
-
-```javascript
-localStorage.setItem('recaptcha_debug', 'true');
-```
+Use the built-in debug component to check your configuration:
+1. Click "Debug Info" in the navigation
+2. Check environment variable status
+3. Verify reCAPTCHA loading
+4. Follow troubleshooting tips
 
 ## API Reference
 

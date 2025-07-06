@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { AuthPage } from './components/AuthPage';
 import { RecaptchaTest } from './components/RecaptchaTest';
+import { DebugInfo } from './components/DebugInfo';
 
 function App() {
   const [showTest, setShowTest] = useState(false);
+  const [showDebug, setShowDebug] = useState(false);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
@@ -16,10 +18,22 @@ function App() {
             </div>
             <div className="flex items-center space-x-4">
               <button
-                onClick={() => setShowTest(!showTest)}
+                onClick={() => {
+                  setShowTest(!showTest);
+                  setShowDebug(false);
+                }}
                 className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
               >
                 {showTest ? 'Show Auth Form' : 'Test reCAPTCHA'}
+              </button>
+              <button
+                onClick={() => {
+                  setShowDebug(!showDebug);
+                  setShowTest(false);
+                }}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+              >
+                {showDebug ? 'Hide Debug' : 'Debug Info'}
               </button>
             </div>
           </div>
@@ -28,7 +42,13 @@ function App() {
 
       {/* Main Content */}
       <div className="py-8">
-        {showTest ? <RecaptchaTest /> : <AuthPage />}
+        {showDebug ? (
+          <DebugInfo />
+        ) : showTest ? (
+          <RecaptchaTest />
+        ) : (
+          <AuthPage />
+        )}
       </div>
     </div>
   );
